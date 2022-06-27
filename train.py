@@ -26,7 +26,7 @@ import glob
 
 # from datetime import datetime
 
-import visdom
+# import visdom
 
 from typing import Dict, Tuple
 
@@ -64,8 +64,9 @@ class LossBCE:
 class LossMulti:
     def __init__(self, jaccard_weight=0, class_weights=None, num_classes=1):
         if class_weights is not None:
-            nll_weight = cuda(
-                torch.from_numpy(class_weights.astype(np.float32)))
+            # nll_weight = cuda(
+            #     torch.from_numpy(class_weights.astype(np.float32)))
+            nll_weight = torch.from_numpy(class_weights.astype(np.float32))
         else:
             nll_weight = None
         self.nll_loss = nn.NLLLoss(weight=nll_weight)
@@ -298,10 +299,10 @@ if __name__ == '__main__':
     for epoch in range(epoch, n_epochs + 1):
 
         # 그래프 그리기
-        vis = visdom.Visdom(port=10003)
+        # vis = visdom.Visdom(port=10003)
         Yaxis = torch.ones(1)
         Xaxis = np.array([0])
-        plot = vis.line(Y=Yaxis, X=Xaxis)
+        # plot = vis.line(Y=Yaxis, X=Xaxis)
 
         lr = cyclic_lr(epoch)
         # optimizer = Adam(model.parameters(), lr, weight_decay=0.0005)
@@ -327,9 +328,9 @@ if __name__ == '__main__':
                 losses.append(loss.item())
                 Yaxis = loss.data[0].unsqueeze(0).cpu()
                 Xaxis = np.array([i])
-                vis.line(Y=Yaxis, X=Xaxis, win=plot, update='append',
-                            opts=dict(title=str(epoch),
-                            showlegend=True))
+                # vis.line(Y=Yaxis, X=Xaxis, win=plot, update='append',
+                #             opts=dict(title=str(epoch),
+                #             showlegend=True))
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -355,7 +356,7 @@ if __name__ == '__main__':
 
                 lrStr = str(lr)
 
-                text_loss = vis.text("Epoch(Best): " + str(epoch) + ",loss: " + lossStr + ",valid_loss: " + valid_lossStr + ",valid_dice: " + "/n" + dice_valueStr + ",lr: " + lrStr)
+                # text_loss = vis.text("Epoch(Best): " + str(epoch) + ",loss: " + lossStr + ",valid_loss: " + valid_lossStr + ",valid_dice: " + "/n" + dice_valueStr + ",lr: " + lrStr)
                 best_valid_loss = valid_loss
                 # torch.save(model.state_dict(), 'best_TernausNet.pth')
                 torch.save(model.state_dict(), 'bestValid_TernausNet.pth')
@@ -385,7 +386,7 @@ if __name__ == '__main__':
 
                 lrStr = str(lr)
 
-                text_loss = vis.text("Epoch(Best): " + str(epoch) + ",loss: " + lossStr + ",valid_loss: " + valid_lossStr + ",valid_dice: " + dice_valueStr + ",lr: " + lrStr)
+                # text_loss = vis.text("Epoch(Best): " + str(epoch) + ",loss: " + lossStr + ",valid_loss: " + valid_lossStr + ",valid_dice: " + dice_valueStr + ",lr: " + lrStr)
 
 
             xlsCols = xlsCols + 1
@@ -398,7 +399,7 @@ if __name__ == '__main__':
 
             if (dice_value > best_dice):
 
-                vis.text("best_dice", win=text_loss, append=True)
+                # vis.text("best_dice", win=text_loss, append=True)
 
                 best_dice = dice_value
                 torch.save(model.state_dict(), 'bestDice_TernausNet.pth')
